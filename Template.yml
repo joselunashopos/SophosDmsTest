@@ -2,14 +2,13 @@ AWSTemplateFormatVersion: 2010-09-09
 Description: DMS Task Resources
 
 Parameters:
-  pTeamName:
+  pBucketName:
     Description: Name of the team (all lowercase, no symbols or spaces)
     Type: String
     AllowedPattern: "[a-z0-9]{2,12}"
-    Default: engineering
 
 Resources:
   DMSS3Bucket:
     Type: AWS::S3::Bucket
     Properties:
-      BucketName: !Sub bucket-dms-test-${AWS::AccountId}-${pTeamName}
+      BucketName: !Sub bucket-dms-test-${AWS::AccountId}-${pBucketName}
