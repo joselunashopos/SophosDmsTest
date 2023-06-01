@@ -9,4 +9,4 @@ Resources:
   DMSS3Bucket:
     Type: AWS::S3::Bucket
     Properties:
-      BucketName: !Sub bucket-dms-test-${AWS::AccountId}-${pDBSourceEngine}
+      BucketName: !Sub bucket-dms-test-${AWS::AccountId}-${pDBSourceName}
