@@ -8,7 +8,7 @@ stack_name="SKT-tst2"
 
 # Parámetros opcionales de CloudFormation (si es necesario)
 SCRIPT_DIR=$(dirname "$0")
-template_file="$SCRIPT_DIR/Template.yml"
+template_file="$SCRIPT_DIR/template.yml"
 
 pDBSourceEngine=$(jq -r '.[] | select(.ParameterKey=="pDBSourceEngine") | .ParameterValue' "$SCRIPT_DIR/parameters.json")
 pDBSourcePort=$(jq -r '.[] | select(.ParameterKey=="pDBSourcePort") | .ParameterValue' "$SCRIPT_DIR/parameters.json")
@@ -17,12 +17,12 @@ pDBSourceSecretFolder=$(jq -r '.[] | select(.ParameterKey=="pDBSourceSecretFolde
 pDMSSchemaFilter=$(jq -r '.[] | select(.ParameterKey=="pDMSSchemaFilter") | .ParameterValue' "$SCRIPT_DIR/parameters.json")
 pDMSTableFilter=$(jq -r '.[] | select(.ParameterKey=="pDMSTableFilter") | .ParameterValue' "$SCRIPT_DIR/parameters.json")
 
-parameters="ParameterKey=pDBSourceEngine,ParameterValue=$pDBSourceEngine "\
-"ParameterKey=pDBSourcePort,ParameterValue=$pDBSourcePort "\
-"ParameterKey=pDBSourceName,ParameterValue=$pDBSourceName "\
-"ParameterKey=pDBSourceSecretFolder,ParameterValue=$pDBSourceSecretFolder "\
-"ParameterKey=pDMSSchemaFilter,ParameterValue=$pDMSSchemaFilter "\ 
-"ParameterKey=pDMSTableFilter,ParameterValue=$pDMSTableFilter "
+parameters="ParameterKey=pDBSourceEngine,ParameterValue=$pDBSourceEngine"\
+" ParameterKey=pDBSourcePort,ParameterValue=$pDBSourcePort"\
+" ParameterKey=pDBSourceName,ParameterValue=$pDBSourceName"\
+" ParameterKey=pDBSourceSecretFolder,ParameterValue=$pDBSourceSecretFolder"\
+" ParameterKey=pDMSSchemaFilter,ParameterValue=$pDMSSchemaFilter"\
+" ParameterKey=pDMSTableFilter,ParameterValue=$pDMSTableFilter"
 # Región de AWS donde se desplegará el stack
 region="us-east-1"
 
