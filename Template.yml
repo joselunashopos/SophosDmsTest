@@ -1,0 +1,12 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: DMS Sophos test Git
+Parameters:
+  pDBSourceName:
+    Description: DB to extract
+    Type: String
+    Default: mysql
+Resources:
+  DMSS3Bucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: !Sub bucket-dms-test-${AWS::AccountId}-${pDBSourceEngine}
