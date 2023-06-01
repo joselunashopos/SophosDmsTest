@@ -7,7 +7,7 @@ stack_name="SKT-tst2"
 template_file="./Template.yaml"
 
 # Parámetros opcionales de CloudFormation (si es necesario)
-parameters="ParameterKey=DBSourceName,ParameterValue=Test"
+parameters="ParameterKey=DBSourceName,ParameterValue=testgitbucket"
 
 
 # Región de AWS donde se desplegará el stack
