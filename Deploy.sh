@@ -1,17 +1,17 @@
 #!/bin/bash
 
 # Nombre del stack de CloudFormation
-stack_name="SKT-tst"
+stack_name="SKT-tst2"
 
 # Ruta al archivo de plantilla de CloudFormation
-template_file="./template.yaml"
+template_file="./Template.yaml"
 
 # Parámetros opcionales de CloudFormation (si es necesario)
-# Ejemplo: parameters="ParameterKey=KeyPairName,ParameterValue=my-key"
-parameters=""
+parameters="ParameterKey=DBSourceName,ParameterValue=Test"
+
 
 # Región de AWS donde se desplegará el stack
 region="us-east-1"
 
 # Comando para desplegar el stack utilizando la AWS CLI
-aws cloudformation create-stack --stack-name "$stack_name" --template-body file://"$template_file" --parameters "$parameters" --region "$region"
+aws cloudformation create-stack --stack-name "$stack_name" --template-body "$template_file" --parameters "$parameters" --region "$region"
