@@ -10,8 +10,7 @@ stack_name="SKT-tst2"
 SCRIPT_DIR=$(dirname "$0")
 template_file="$SCRIPT_DIR/Template.yml"
 
-
-$BucketName=$(sed -e 's/^"//' -e 's/"$//' <<<"$(jq '.[] | select(.ParameterKey=="pBucketName") | .ParameterValue' $SCRIPT_DIR/parameters.json)")
+BucketName=$(jq -r '.[] | select(.ParameterKey=="pBucketName") | .ParameterValue' "$SCRIPT_DIR/parameters.json")
 
 parameters="ParameterKey=pBucketName,ParameterValue=$BucketName"
 # Región de AWS donde se desplegará el stack
