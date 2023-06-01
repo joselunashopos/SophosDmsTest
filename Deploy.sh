@@ -4,14 +4,18 @@
 stack_name="SKT-tst2"
 
 # Ruta al archivo de plantilla de CloudFormation
-template_file="./Template.yaml"
+#template_file="./Template.yaml"
 
 # Parámetros opcionales de CloudFormation (si es necesario)
-parameters="ParameterKey=DBSourceName,ParameterValue=testgitbucket"
+SCRIPT_DIR=$(dirname "$0")
+template_file="$SCRIPT_DIR/Template.yml"
 
 
+Bucket_name=$(sed -e 's/^"//' -e 's/"$//' <<<"$(jq '.[] | select(.ParameterKey=="pBucketName") | .ParameterValue' $DIRNAME/parameters.json)")
+
+parameters="ParameterKey=pTeamName,ParameterValue=testgitbk"
 # Región de AWS donde se desplegará el stack
 region="us-east-1"
 
 # Comando para desplegar el stack utilizando la AWS CLI
-aws cloudformation create-stack --stack-name "$stack_name" --template-body "$template_file" --parameters "$parameters" --region "$region"
+aws cloudformation create-stack --stack-name "$stack_name" --template-body file://"$template_file" --parameters "$parameters" --region "$region"
