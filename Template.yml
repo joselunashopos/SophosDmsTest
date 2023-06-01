@@ -1,12 +1,15 @@
 AWSTemplateFormatVersion: 2010-09-09
-Description: DMS Sophos test Git
+Description: DMS Task Resources
+
 Parameters:
-  pDBSourceName:
-    Description: DB to extract
+  pTeamName:
+    Description: Name of the team (all lowercase, no symbols or spaces)
     Type: String
-    Default: mysql
+    AllowedPattern: "[a-z0-9]{2,12}"
+    Default: engineering
+
 Resources:
   DMSS3Bucket:
     Type: AWS::S3::Bucket
     Properties:
-      BucketName: !Sub bucket-dms-test-${AWS::AccountId}-${pDBSourceName}
+      BucketName: !Sub bucket-dms-test-${AWS::AccountId}-${pTeamName}
