@@ -1,1 +1,10 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: DMS Excel Sophos test layer Zip
 
+Resources:
+
+  DMSS3Bucket:
+    Type: AWS::S3::Bucket
+    #DependsOn: MyLambdaPermission
+    Properties:
+      BucketName: !Sub bucket-dms-excel-${AWS::AccountId}
