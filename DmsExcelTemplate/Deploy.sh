@@ -17,7 +17,7 @@ bucket="bucket-dms-excel-$account_id"
 
 #aws s3api put-object --bucket "$bucket" --key libreries/
 
-#sleep 30
+sleep 60
 
 aws s3 cp python.zip s3://"$bucket" --output json
 
