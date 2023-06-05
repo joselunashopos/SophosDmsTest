@@ -5,16 +5,7 @@ Parameters:
     Description: Type of DB Engine
     Type: String
     Default: mysql
-    AllowedValues:
-      - mysql
-      - oracle
-      - postgres
-      - mariadb
-      - aurora
-      - aurora-postgresql
-      - db2
-      - sybase
-      - sqlserver
+    
 
 Resources:
   DmsExcelRoleTest:
