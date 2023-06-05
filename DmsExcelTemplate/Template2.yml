@@ -1,1 +1,131 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: DMS Excel Sophos test
+Parameters:
+  pDBSourceEngine:
+    Description: Type of DB Engine
+    Type: String
+    Default: mysql
+    AllowedValues:
+      - mysql
+      - oracle
+      - postgres
+      - mariadb
+      - aurora
+      - aurora-postgresql
+      - db2
+      - sybase
+      - sqlserver
 
+Resources:
+  DmsExcelRoleTest:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: lambda.amazonaws.com
+            Action: sts:AssumeRole
+      Policies:
+        - PolicyName: Dmsexcelpolicy
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+            - Resource: "*"
+              Effect: Allow
+              Action:
+                - logs:CreateLogGroup
+                - logs:CreateLogStream
+                - logs:PutLogEvents
+                - s3:*
+                - s3-object-lambda:*
+
+  LambdaExcelLeyer:
+    Type: AWS::Lambda::LayerVersion
+    Properties:
+      Content:
+        S3Bucket: bucket-dms-excel-${AWS::AccountId}-${pDBSourceEngine}
+        S3Key: python.zip
+      CompatibleRuntimes:
+        - python3.8
+        - python3.9
+      Description: My Lambda Layer
+
+
+  LambdaGetParams:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName: !Sub get-params-data-${pDBSourceEngine}
+      Role: 
+        Fn::GetAtt: [DmsExcelRoleTest, Arn]
+      Runtime: python3.9
+      Handler: index.lambda_handler
+      Layers:
+        - !Ref LambdaExcelLeyer
+      Timeout: 300
+      Environment:
+        Variables:
+          Bucket: !Sub bucket-dms-excel-${AWS::AccountId}-${pDBSourceEngine}
+      Code:
+        ZipFile: |
+          import boto3
+          import json
+          import openpyxl
+          import tempfile
+          import os
+          from io import BytesIO
+
+          def lambda_handler(event, context):
+              # Obtén el nombre del archivo Excel y el nombre del bucket de S3 desde el evento
+              file_name = 'cf_file/DmsParams.xlsx'
+              bucket_name = os.environ['Bucket']
+
+              # Crea una instancia del cliente de S3
+              s3 = boto3.client('s3')
+
+              # Descarga el archivo Excel desde S3 a una ubicación temporal en el sistema de archivos de Lambda
+              response = s3.get_object(Bucket=bucket_name, Key=file_name)
+              excel_data = response['Body'].read()
+
+                  # Crea un flujo de datos a partir de los datos del archivo Excel
+              excel_stream = BytesIO(excel_data)
+
+              # Abre el archivo Excel descargado con openpyxl
+              workbook = openpyxl.load_workbook(excel_stream)
+
+              # Aquí puedes realizar operaciones adicionales con el archivo Excel, como leer las hojas, manipular los datos, etc.
+              # Por ejemplo, puedes obtener el nombre de todas las hojas del libro:
+              sheets = workbook.sheetnames
+              i = 0
+              j = 0
+              param = []
+              print(sheets)
+              # Recorre cada hoja del libro
+              for sheet_name in sheets:
+                  if j == 0:
+                      sheet = workbook['Datos']
+                      # Accede a los datos de la hoja
+                      for row in sheet.iter_rows(values_only=True):
+                          # Realiza alguna operación con los datos de la fila
+                          print(row)
+                          dict = {}
+                          if i > 0:
+                              dict["ParameterKey"] = str(row[0])
+                              dict["ParameterValue"] = str(row[1])
+                              param.append(dict)
+                          i = i + 1 
+                      j = j + 1
+                      
+              
+              # Recuerda cerrar el archivo después de usarlo
+              print(param)
+              workbook.close()
+              
+              json_data = json.dumps(param)
+
+              # Especificar el nombre del bucket y el nombre del archivo en S3
+              file_name_json = 'cf_file/params.json'
+
+              # Subir el archivo JSON al bucket de S3
+              s3.put_object(Body=json_data, Bucket=bucket_name, Key=file_name_json)
