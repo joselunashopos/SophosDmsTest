@@ -1,7 +1,7 @@
 AWSTemplateFormatVersion: 2010-09-09
 Description: DMS Excel Sophos test
 Parameters:
-  pDBSourceEngine:
+  pTemplate:
     Description: Type of DB Engine
     Type: String
     Default: mysql
@@ -45,7 +45,7 @@ Resources:
     Type: AWS::Lambda::LayerVersion
     Properties:
       Content:
-        S3Bucket: bucket-dms-excel-${AWS::AccountId}-${pDBSourceEngine}
+        S3Bucket: bucket-dms-excel-${AWS::AccountId}
         S3Key: python.zip
       CompatibleRuntimes:
         - python3.8
@@ -56,7 +56,7 @@ Resources:
   LambdaGetParams:
     Type: AWS::Lambda::Function
     Properties:
-      FunctionName: !Sub get-params-data-${pDBSourceEngine}
+      FunctionName: !Sub get-params-data-${AWS::AccountId}
       Role: 
         Fn::GetAtt: [DmsExcelRoleTest, Arn]
       Runtime: python3.9
@@ -66,7 +66,7 @@ Resources:
       Timeout: 300
       Environment:
         Variables:
-          Bucket: !Sub bucket-dms-excel-${AWS::AccountId}-${pDBSourceEngine}
+          Bucket: !Sub bucket-dms-excel-${AWS::AccountId}
       Code:
         ZipFile: |
           import boto3
