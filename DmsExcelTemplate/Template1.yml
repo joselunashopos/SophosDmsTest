@@ -14,3 +14,9 @@ Resources:
     #DependsOn: MyLambdaPermission
     Properties:
       BucketName: !Sub bucket-dms-excel-${AWS::AccountId}
+      
+  Outputs:
+    MyBucketName:
+      Value: !Ref DMSS3Bucket
+      Export:
+        Name: DmsExcelBucketName
