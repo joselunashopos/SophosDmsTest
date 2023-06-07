@@ -6,17 +6,79 @@ Parameters:
     Description: Default Param
     Type: String
     Default: Default
-    
+
 Resources:
+  ExecParamsRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: lambda.amazonaws.com
+            Action: sts:AssumeRole
+      Policies:
+        - PolicyName: Dmsexcelpolicy
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+            - Resource: "*"
+              Effect: Allow
+              Action:
+                - lambda:InvokeFunction
+
+  LambdaExcGetParams:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName: !Sub exec-params-data-${AWS::AccountId}
+      Role: 
+        Fn::GetAtt: [ExecParamsRole, Arn]
+      Runtime: python3.9
+      Handler: index.lambda_handler
+      Timeout: 300
+      Environment:
+        Variables:
+          ID: ${AWS::AccountId}
+      Code:
+        ZipFile: |
+          import boto3
+          import os
+
+          def lambda_handler(event, context):
+              # TODO implement
+              client = boto3.client('lambda')
+
+              # Invoca la función secundaria
+              lambda_name = 'get-params-data-'+os.environ['ID']
+              payload = '{"key": "value"}' 
+              response = client.invoke(
+                            FunctionName=lambda_name,
+                            InvocationType='Event', 
+                            Payload=payload
+                        )
+
+              # Maneja la respuesta de la función secundaria si es necesario
+
+              # Código adicional de la función principal
+
+              return {
+                  'statusCode': 200,
+                  'body': 'Función principal ejecutada exitosamente'
+              }
 
   DMSS3Bucket:
     Type: AWS::S3::Bucket
-    #DependsOn: MyLambdaPermission
-    Properties:
-      BucketName: !Sub bucket-dms-excel-${AWS::AccountId}
-      
-  Outputs:
-    MyBucketName:
-      Value: !Ref DMSS3Bucket
-      Export:
-        Name: DmsExcelBucketName
+      Properties:
+        BucketName: !Sub bucket-dms-excel-${AWS::AccountId}-${pDBSourceEngine}
+        NotificationConfiguration:
+          LambdaConfigurations:
+            - Event: s3:ObjectCreated:*
+              Function:
+                Fn::GetAtt: 
+                  [ LambdaExcGetParams, Arn]
+              Filter:
+                S3Key:
+                  Rules:
+                    - Name: prefix
+                      Value: cf_files_in/
