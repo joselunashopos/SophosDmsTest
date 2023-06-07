@@ -66,6 +66,14 @@ Resources:
                   'statusCode': 200,
                   'body': 'Función principal ejecutada exitosamente'
               }
+  LambdaExcelPermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName:
+        Fn::GetAtt: [LambdaExcGetParams, Arn]
+      Action: lambda:InvokeFunction
+      Principal: s3.amazonaws.com
+      SourceAccount: !Ref AWS::AccountId
 
   DMSS3Bucket:
     Type: AWS::S3::Bucket
@@ -74,7 +82,8 @@ Resources:
       NotificationConfiguration:
         LambdaConfigurations:
           - Event: s3:ObjectCreated:*
-            Function: !Sub arn:aws:lambda:us-east-1:118712814110:function:exec-params-data-${AWS::AccountId}
+            Function:
+              Fn::GetAtt: [LambdaExcGetParams, Arn]
             Filter:
               S3Key:
                 Rules:
