@@ -864,7 +864,7 @@ Resources:
         Fn::GetAtt: [lambdaExcRoleTest, Arn]
       Runtime: python3.9
 
-  MyScheduledRule:
+  ExcFunctionRule:
     Type: AWS::Events::Rule
     DependsOn: lambdaFunctionExcStepF
     Properties:
@@ -875,3 +875,14 @@ Resources:
         - Arn: 
             Fn::GetAtt: [ lambdaFunctionExcStepF, Arn]
           Id: LambdaExctarget
+  
+  PermissionForEventsToInvokeLambda: 
+    Type: AWS::Lambda::Permission
+    Properties: 
+      FunctionName: 
+        !Ref lambdaFunctionExcStepF
+      Action: "lambda:InvokeFunction"
+      Principal: "events.amazonaws.com"
+      SourceArn: 
+        Fn::GetAtt: 
+          [ ExcFunctionRule, Arn]
