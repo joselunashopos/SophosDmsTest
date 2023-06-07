@@ -74,9 +74,7 @@ Resources:
       NotificationConfiguration:
         LambdaConfigurations:
           - Event: s3:ObjectCreated:*
-            Function:
-              Fn::GetAtt: 
-                [ LambdaExcGetParams, Arn]
+            Function: !Ref LambdaExcGetParams
             Filter:
               S3Key:
                 Rules:
