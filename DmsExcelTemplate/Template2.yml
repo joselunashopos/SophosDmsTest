@@ -120,19 +120,3 @@ Resources:
 
               # Subir el archivo JSON al bucket de S3
               s3.put_object(Body=json_data, Bucket=bucket_name, Key=file_name_json)
-  
-  MyLambdaTrigger:
-    Type: AWS::S3::Bucket
-    Properties:
-      BucketName: !ImportValue DmsExcelBucketName
-      NotificationConfiguration:
-        LambdaConfigurations:
-          - Event: s3:ObjectCreated:*
-            Function:
-              Fn::GetAtt: 
-                [ LambdaGetParams, Arn]
-            Filter:
-              S3Key:
-                Rules:
-                  - Name: prefix
-                    Value: cf_files_in/
