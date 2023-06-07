@@ -69,16 +69,16 @@ Resources:
 
   DMSS3Bucket:
     Type: AWS::S3::Bucket
-      Properties:
-        BucketName: !Sub bucket-dms-excel-${AWS::AccountId}-${pDBSourceEngine}
-        NotificationConfiguration:
-          LambdaConfigurations:
-            - Event: s3:ObjectCreated:*
-              Function:
-                Fn::GetAtt: 
-                  [ LambdaExcGetParams, Arn]
-              Filter:
-                S3Key:
-                  Rules:
-                    - Name: prefix
-                      Value: cf_files_in/
+    Properties:
+      BucketName: !Sub bucket-dms-excel-${AWS::AccountId}-${pDBSourceEngine}
+      NotificationConfiguration:
+        LambdaConfigurations:
+          - Event: s3:ObjectCreated:*
+            Function:
+              Fn::GetAtt: 
+                [ LambdaExcGetParams, Arn]
+            Filter:
+              S3Key:
+                Rules:
+                  - Name: prefix
+                    Value: cf_files_in/
