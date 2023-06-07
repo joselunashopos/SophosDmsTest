@@ -69,7 +69,7 @@ Resources:
 
           def lambda_handler(event, context):
               # Obtén el nombre del archivo Excel y el nombre del bucket de S3 desde el evento
-              file_name = 'cf_file/DmsParams.xlsx'
+              file_name = 'cf_file_in/DmsParams.xlsx'
               bucket_name = os.environ['Bucket']
 
               # Crea una instancia del cliente de S3
@@ -116,7 +116,23 @@ Resources:
               json_data = json.dumps(param)
 
               # Especificar el nombre del bucket y el nombre del archivo en S3
-              file_name_json = 'cf_file/params.json'
+              file_name_json = 'cf_file_out/params.json'
 
               # Subir el archivo JSON al bucket de S3
               s3.put_object(Body=json_data, Bucket=bucket_name, Key=file_name_json)
+  
+  MyLambdaTrigger:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: !ImportValue DmsExcelBucketName
+      NotificationConfiguration:
+        LambdaConfigurations:
+          - Event: s3:ObjectCreated:*
+            Function:
+              Fn::GetAtt: 
+                [ LambdaGetParams, Arn]
+            Filter:
+              S3Key:
+                Rules:
+                  - Name: prefix
+                    Value: cf_files_in/
