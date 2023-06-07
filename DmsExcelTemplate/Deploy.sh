@@ -15,7 +15,7 @@ account_id=$(aws sts get-caller-identity --query "Account" --output text)
 
 bucket="bucket-dms-excel-$account_id"
 
-#aws s3api put-object --bucket "$bucket" --key libreries/
+aws s3api put-object --bucket "$bucket" --key cf_file/
 
 sleep 60
 
