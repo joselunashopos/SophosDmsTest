@@ -869,7 +869,7 @@ Resources:
     DependsOn: lambdaFunctionExcStepF
     Properties:
       Name: ExecDmsRule
-      ScheduleExpression: rate(5 minutes)
+      ScheduleExpression: rate(30 minutes)
       State: ENABLED
       Targets:
         - Arn: 
