@@ -39,7 +39,7 @@ Resources:
       Timeout: 300
       Environment:
         Variables:
-          ID: ${AWS::AccountId}
+          ID: !Sub ${AWS::AccountId}
       Code:
         ZipFile: |
           import boto3
