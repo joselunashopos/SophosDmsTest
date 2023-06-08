@@ -88,4 +88,4 @@ Resources:
               S3Key:
                 Rules:
                   - Name: prefix
-                    Value: cf_files_in/
+                    Value: cf_file_in/
