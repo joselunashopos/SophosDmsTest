@@ -886,3 +886,16 @@ Resources:
       SourceArn: 
         Fn::GetAtt: 
           [ ExcFunctionRule, Arn]
+Outputs:
+  EndPointSourceDMS:
+    Value: !Sub ${DMSSourceTest} 
+    Export: 
+      Name: pEndPointSourceDMS
+  EndPointTargetDMS:
+    Value: !Sub ${DMSTargetTest}
+    Export: 
+      Name: pEndPointTargetDMS
+  ReplicationInstanceDMS:
+    Value: !Sub ${DmsReplicationInstanceTest} 
+    Export: 
+      Name: pReplicationInstanceDMS
