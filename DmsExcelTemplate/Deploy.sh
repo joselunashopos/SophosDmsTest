@@ -5,7 +5,7 @@ template_file="$SCRIPT_DIR/Template1.yml"
 
 parameters="$SCRIPT_DIR/parameters.json"
 
-region="us-east-1"
+region=$(aws configure get region)
 
 aws cloudformation create-stack --stack-name "$stack_name" --template-body file://"$template_file" --parameters file://"$parameters" --region "$region" --capabilities CAPABILITY_IAM
 
