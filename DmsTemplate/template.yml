@@ -822,10 +822,10 @@ Resources:
                   print(file_name)
                   if file_name not in archivos_procesados:
                       datos.append(x)
-                  if file['Size'] <= 1000000 and instance == 'Default':
-                      instance = 'c1.medium'
-                  if file['Size'] >= 1000000 and instance == 'Default':
-                      instance = 'm4.large'
+                  if file['Size'] <= 1000000 and instance == 'Default': ## change size to project need
+                      instance = 'm4.large' ## change insatnce to project need
+                  if file['Size'] >= 1000000 and instance == 'Default': ## change size to project need
+                      instance = 'm4.large' ## change instance to project need 
                   
               sdato = ''
               
