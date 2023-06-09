@@ -67,56 +67,95 @@ Resources:
           import os
           from io import BytesIO
 
-          def lambda_handler(event, context):
-              # Obtén el nombre del archivo Excel y el nombre del bucket de S3 desde el evento
+          def dms_file():#this file is the principal file of Dms
               file_name = 'cf_file_in/DmsParams.xlsx'
               bucket_name = os.environ['Bucket']
 
-              # Crea una instancia del cliente de S3
               s3 = boto3.client('s3')
+              try:
+                  response = s3.get_object(Bucket=bucket_name, Key=file_name)
+                  excel_data = response['Body'].read()
 
-              # Descarga el archivo Excel desde S3 a una ubicación temporal en el sistema de archivos de Lambda
-              response = s3.get_object(Bucket=bucket_name, Key=file_name)
-              excel_data = response['Body'].read()
+                  excel_stream = BytesIO(excel_data)
 
-                  # Crea un flujo de datos a partir de los datos del archivo Excel
-              excel_stream = BytesIO(excel_data)
+                  workbook = openpyxl.load_workbook(excel_stream)
 
-              # Abre el archivo Excel descargado con openpyxl
-              workbook = openpyxl.load_workbook(excel_stream)
+                  sheets = workbook.sheetnames
+                  i = 0
+                  j = 0
+                  param = []
+                  for sheet_name in sheets:
+                      if j == 0:
+                          sheet = workbook['Data']
+                          for row in sheet.iter_rows(values_only=True):
+                              print(row)
+                              dict = {}
+                              if i > 0:
+                                   if row[0] is not None:
+                                      dict["ParameterKey"] = str(row[0])
+                                      dict["ParameterValue"] = str(row[1])
+                                      param.append(dict)
+                              i = i + 1 
+                          j = j + 1
 
-              # Aquí puedes realizar operaciones adicionales con el archivo Excel, como leer las hojas, manipular los datos, etc.
-              # Por ejemplo, puedes obtener el nombre de todas las hojas del libro:
-              sheets = workbook.sheetnames
-              i = 0
-              j = 0
-              param = []
-              print(sheets)
-              # Recorre cada hoja del libro
-              for sheet_name in sheets:
-                  if j == 0:
-                      sheet = workbook['Datos']
-                      # Accede a los datos de la hoja
-                      for row in sheet.iter_rows(values_only=True):
-                          # Realiza alguna operación con los datos de la fila
-                          print(row)
-                          dict = {}
-                          if i > 0:
-                              dict["ParameterKey"] = str(row[0])
-                              dict["ParameterValue"] = str(row[1])
-                              param.append(dict)
-                          i = i + 1 
-                      j = j + 1
-                      
-              
-              # Recuerda cerrar el archivo después de usarlo
-              print(param)
-              workbook.close()
-              
-              json_data = json.dumps(param)
 
-              # Especificar el nombre del bucket y el nombre del archivo en S3
-              file_name_json = 'cf_file_out/params.json'
+                  print(param)
+                  workbook.close()
 
-              # Subir el archivo JSON al bucket de S3
-              s3.put_object(Body=json_data, Bucket=bucket_name, Key=file_name_json)
+                  json_data = json.dumps(param)
+
+                  file_name_json = 'cf_file_out/params.json'
+                  s3.put_object(Body=json_data, Bucket=bucket_name, Key=file_name_json)
+              except:
+                  return "file no found"
+
+          def dms_task_file():#this file is the principal file of Dms
+              file_name = 'cf_file_in/DmsTaskParams.xlsx'
+              bucket_name = os.environ['Bucket']
+
+              s3 = boto3.client('s3')
+              try:
+                  response = s3.get_object(Bucket=bucket_name, Key=file_name)
+                  excel_data = response['Body'].read()
+
+                  excel_stream = BytesIO(excel_data)
+
+                  workbook = openpyxl.load_workbook(excel_stream)
+
+                  sheets = workbook.sheetnames
+                  i = 0
+                  j = 0
+                  param = []
+                  for sheet_name in sheets:
+                      if j == 0:
+                          sheet = workbook['Data']
+                          for row in sheet.iter_rows(values_only=True):
+                              print(row)
+                              dict = {}
+                              if i > 0:
+                                  if row[0] is not None:
+                                      dict["ParameterKey"] = str(row[0])
+                                      dict["ParameterValue"] = str(row[1])
+                                      param.append(dict)
+                              i = i + 1 
+                          j = j + 1
+
+
+                  print(param)
+                  workbook.close()
+
+                  json_data = json.dumps(param)
+
+                  file_name_json = 'cf_file_out/taskparams.json'
+                  s3.put_object(Body=json_data, Bucket=bucket_name, Key=file_name_json)
+              except:
+                  return "file no found"
+
+
+
+
+          def lambda_handler(event, context):
+
+              dms_file()
+              dms_task_file()
+    
