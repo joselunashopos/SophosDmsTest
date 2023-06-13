@@ -12,7 +12,7 @@ account_id=$(aws sts get-caller-identity --query "Account" --output text)
 
 bucket="s3://bucket-dms-excel-$account_id/cf_file_out/params.json"
 
-aws s3 cp "$bucket"
+aws s3 cp "$bucket" .
 
 SCRIPT_DIR=$(dirname "$0")
 template_file="$SCRIPT_DIR/template.yml"
